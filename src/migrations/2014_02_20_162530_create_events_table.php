@@ -14,7 +14,6 @@ class CreateEventsTable extends Migration {
 	{
 		Schema::create('fbf_events', function(Blueprint $table)
 		{
-
 			$table->increments('id');
 			$table->string('title');
 			$table->dateTime('starts');

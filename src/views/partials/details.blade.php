@@ -38,6 +38,14 @@
 
 	{{ $event->content }}
 
+	@if (Config::get('laravel-events::link.show') && !empty($event->link_url) && !empty($event->link_text))
+		<p class="item--external-link">
+			<a href="{{ $event->link_url }}">
+				{{ $event->link_text }}
+			</a>
+		</p>
+	@endif
+
 </div>
 
 @if (Config::get('laravel-events::map.show') && $event->hasMap())
