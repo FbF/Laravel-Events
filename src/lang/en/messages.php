@@ -8,7 +8,6 @@ return array(
 	),
 
 	'details' => array(
-		'share_label' => 'Share',
 		'all_link_text' => 'All events',
 	),
 
