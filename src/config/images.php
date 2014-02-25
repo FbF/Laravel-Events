@@ -6,8 +6,8 @@
 return array(
 
 	/**
-	 * By default, there is only one image field, but if you extend the package to add more images per event, you
-	 * can add config for those images here. This will allow you to use the Event model methods for getting the
+	 * By default, there is only one image field, but if you extend the package to add more images per record, you
+	 * can add config for those images here. This will allow you to use the package model methods for getting the
 	 * settings for a particular image.
 	 *
 	 * The keys correspond to the field names in your database table.

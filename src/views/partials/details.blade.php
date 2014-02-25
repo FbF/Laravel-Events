@@ -52,6 +52,6 @@
 	@include('laravel-events::partials.map')
 @endif
 
-@if (Config::get('laravel-events::views.view_page.show_adjacent_events') && ($newer || $older))
+@if (Config::get('laravel-events::views.view_page.show_adjacent_items') && ($newer || $older))
 	@include('laravel-events::partials.adjacent')
 @endif

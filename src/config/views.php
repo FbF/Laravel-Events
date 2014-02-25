@@ -53,11 +53,11 @@ return array(
 		'show_archives' => true,
 
 		/**
-		 * Determines whether to show adjacent (i.e. previous and next) event links on the event view page
+		 * Determines whether to show links to adjacent (i.e. previous and next) items on the view page
 		 *
 		 * @type bool
 		 */
-		'show_adjacent_events' => true,
+		'show_adjacent_items' => true,
 
 		/**
 		 * Determines whether to show the share partial on the event view page

@@ -1,4 +1,4 @@
-@if (isset($archives) and !empty($archives))
+@if (isset($archives) && !empty($archives))
 	<ul class="archives">
 		@foreach ($archives as $year => $months)
 		<li class="archives--year{{ isset($selectedYear) && $year == $selectedYear ? ' archives--year__active' : '' }}">{{ $year }}
