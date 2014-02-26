@@ -4,7 +4,7 @@
 
 		@foreach ($events as $event)
 
-			<div class="item">
+			<div class="item{{ $post->is_sticky ? ' item__sticky' : '' }}">
 
 				<h2 class="item--title">
 					<a href="{{ $event->getUrl() }}" title="{{ $event->title }}">

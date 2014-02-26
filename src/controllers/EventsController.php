@@ -22,6 +22,7 @@ class EventsController extends \BaseController {
 
 		// Get the current page's events
 		$viewData['events'] = $query
+			->orderBy('is_sticky', 'desc')
 			->orderBy('starts', 'desc')
 			->paginate(\Config::get('laravel-events::views.index_page.results_per_page'));
 

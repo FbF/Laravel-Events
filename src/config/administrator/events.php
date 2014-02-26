@@ -166,6 +166,10 @@ return array(
 					return Config::get('laravel-events::map.marker_title');
 				},
 		),
+		'is_sticky' => array(
+			'title' => 'Is sticky?',
+			'type' => 'bool',
+		),
 		'in_rss' => array(
 			'title' => 'In RSS Feed?',
 			'type' => 'bool',
