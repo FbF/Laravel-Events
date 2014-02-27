@@ -12,6 +12,7 @@ A Laravel 4 package to add events listings to a site
 * separate page title, meta description and keywords fields, also a slug field which is automatically generated from the title
 * Draft/Approved status
 * published date for future publishing
+* In RSS? and Is Sticky? fields
 
 ## The package comes with
 * Optional routes file with configurable URL prefix, or you can choose to use your own routes
@@ -72,96 +73,38 @@ A ready-to-use model config file for the `Event` model (`events.php`) is provide
 
 ## Usage
 
+The package should work out the box (provided you have a master blade layout file, since the out-of-the-box views extend this)
+ but if you want to add other content to the pages, such as your own header, logo, navigation, sidebar etc, you'll want to
+ override the views provided.
+
+The package views declare several sections that you may want to `yield` in your `app/views/layouts/master.blade.php` file, e.g.:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<title>@yield('title')</title>
+	<meta name="description" content="@yield('meta_description')">
+	<meta name="keywords" content="@yield('meta_keywords')">
+</head>
+<body>
+<div class="content">
+	@yield('content')
+</div>
+</body>
+</html>
+```
+
 The package's views are actually really simple, and most of the presentation is done in partials. This is deliberate so you
  can override the package's views in your own app, so you can include your own chrome, navigation and sidebars etc, yet
  you can also still make use of the partials provided, if you want to.
 
-To override any view in your own app, just create the following directories and copy the file from the package into it
+To override any view in your own app, just create the following directories and copy the file from the package into it, then hack away
 * `app/views/packages/fbf/laravel-events/events`
 * `app/views/packages/fbf/laravel-events/partials`
 
 ## Extending
 
-Let's say each event in your site can have a testimonial on it.
+You can extend the model to add more fields, relations and even filter event listings by a relationship.
 
-* After installing the package you can create the testimonials table and model etc (or use the fbf/laravel-testimonials package)
-* Create the migration to add a testimonial_id field to the fbf_events table, and run it
-
-```php
-<?php
-
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-
-class LinkEventsToTestimonials extends Migration {
-
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::table('fbf_events', function(Blueprint $table)
-		{
-			$table->integer('testimonial_id')->nullable()->default(null);
-		});
-	}
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::table('fbf_events', function(Blueprint $table)
-		{
-			$table->dropColumn('testimonial_id');
-		});
-	}
-
-}
-```
-
-* Create a model in you app/models directory that extends the package model and includes the relationship
-
-```php
-<?php
-
-class Event extends Fbf\LaravelEvents\Event {
-
-	public function testimonial()
-	{
-		return $this->belongsTo('Fbf\LaravelTestimonials\Testimonial');
-	}
-
-}
-```
-
-* If you are using FrozenNode's Administrator package, update the events config file to use your new model, and to allow selecting the testimonial to attach to the page:
-
-```php
-	/**
-	 * The class name of the Eloquent model that this config represents
-	 *
-	 * @type string
-	 */
-	'model' => 'Event',
-```
-...
-```php
-		'testimonial' => array(
-			'title' => 'Testimonial',
-			'type' => 'relationship',
-			'name_field' => 'title',
-		),
-```
-
-* Finally, update the IoC Container to inject an instance of your model into the controller, instead of the package's model, e.g. in `app/start/global.php`
-
-```php
-App::bind('Fbf\LaravelEvents\EventsController', function() {
-    return new Fbf\LaravelEvents\EventsController(new Event);
-});
-```
+See the extending section in the readme on http://github.com/FbF/Laravel-Blog as it works the same way.

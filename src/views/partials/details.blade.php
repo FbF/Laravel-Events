@@ -1,4 +1,4 @@
-<div class="item{{ $post->is_sticky ? ' item__sticky' : '' }}">
+<div class="item{{ $event->is_sticky ? ' item__sticky' : '' }}">
 
 	<p class="item--all-link">
 		<a href="{{ action('Fbf\LaravelEvents\EventsController@index') }}">

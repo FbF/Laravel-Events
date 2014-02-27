@@ -304,7 +304,7 @@ class FakeEventsSeeder extends \Seeder {
 
 	protected function setIsSticky()
 	{
-		$this->post->is_sticky = (bool) rand(0, 1);
+		$this->event->is_sticky = (bool) rand(0, 1);
 	}
 
 	protected function setInRss()

@@ -26,12 +26,50 @@ class Event extends \Eloquent {
 		'include_trashed' => true,
 	);
 
+	/**
+	 * Query scope for "live" events, adds conditions for status = APPROVED and published date is in the past
+	 *
+	 * @param $query
+	 * @return mixed
+	 */
 	public function scopeLive($query)
 	{
 		return $query->where('status', '=', self::APPROVED)
 			->where('published_date', '<=', \Carbon\Carbon::now());
 	}
 
+	/**
+	 * Query scope for posts published within the given year and month number.
+	 *
+	 * @param $query
+	 * @param $year
+	 * @param $month
+	 * @return mixed
+	 */
+	public function scopeByYearMonth($query, $year, $month)
+	{
+		return $query->where(\DB::raw('DATE_FORMAT(starts, "%Y%m")'), '=', $year.$month);
+	}
+
+	/**
+	 * Returns a formatted multi-dimensional array, indexed by year and month number, each with an array with keys for
+	 * 'month name' and the count / number of items in that month. For example:
+	 *
+	 *      array(
+	 *          2014 => array(
+	 *              01 => array(
+	 *                  'monthname' => 'January',
+	 *                  'count' => 4,
+	 *              ),
+	 *              02 => array(
+	 *                  'monthname' => 'February',
+	 *                  'count' => 3,
+	 *              ),
+	 *          )
+	 *      )
+	 *
+	 * @return array
+	 */
 	public static function archives()
 	{
 		$archives = self::live()
@@ -53,6 +91,19 @@ class Event extends \Eloquent {
 			);
 		}
 		return $results;
+	}
+
+	/**
+	 * To filter items by a relationship, you should extend the Post class and define both the relationship and the
+	 * scopeByRelationship() method in your subclass. See the package readme for an example.
+	 *
+	 * @param $query
+	 * @param $relationshipIdentifier
+	 * @throws Exception
+	 */
+	public function scopeByRelationship($query, $relationshipIdentifier)
+	{
+		throw new Exception('Extend this class and override this method according to your app\'s requirements');
 	}
 
 	/**
@@ -243,5 +294,33 @@ class Event extends \Eloquent {
 	public function hasMap()
 	{
 		return $this->marker_latitude != 0 && $this->marker_longitude != 0;
+	}
+
+	/**
+	 * Returns the next newer item, relative to the current one, if it exists
+	 * @return mixed
+	 */
+	public function newer()
+	{
+		return $this->live()
+			->where('starts', '>=', $this->starts)
+			->where('id', '<>', $this->id)
+			->orderBy('starts', 'asc')
+			->orderBy('id', 'asc')
+			->first();
+	}
+
+	/**
+	 * Returns the next older item, relative to the current one, if it exists
+	 * @return mixed
+	 */
+	public function older()
+	{
+		return $this->live()
+			->where('starts', '<=', $this->starts)
+			->where('id', '<>', $this->id)
+			->orderBy('starts', 'desc')
+			->orderBy('id', 'desc')
+			->first();
 	}
 }

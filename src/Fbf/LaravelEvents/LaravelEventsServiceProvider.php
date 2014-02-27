@@ -20,7 +20,7 @@ class LaravelEventsServiceProvider extends ServiceProvider {
 	{
 		$this->package('fbf/laravel-events');
 
-		if (\Config::get('laravel-events::use_built_in_routes', true))
+		if (\Config::get('laravel-events::routes.use_package_routes', true))
 		{
 			include __DIR__.'/../../routes.php';
 		}
