@@ -15,6 +15,15 @@ class Event extends \Eloquent {
 	protected $table = 'fbf_events';
 
 	/**
+	 * The prefix string for config options.
+	 *
+	 * Defaults to the package's config prefix string
+	 *
+	 * @var string
+	 */
+	protected $configPrefix = 'laravel-events::';
+
+	/**
 	 * Used for Cviebrock/EloquentSluggable
 	 * @var array
 	 */
@@ -148,7 +157,7 @@ class Event extends \Eloquent {
 		{
 			return null;
 		}
-		return self::getImageConfig($type, $size, 'dir') . $this->$type;
+		return $this->getImageConfig($type, $size, 'dir') . $this->$type;
 	}
 
 	/**
@@ -164,7 +173,7 @@ class Event extends \Eloquent {
 		{
 			return null;
 		}
-		$method = self::getImageConfig($type, $size, 'method');
+		$method = $this->getImageConfig($type, $size, 'method');
 
 		// Width varies for images that are 'portrait', 'auto', 'fit', 'crop'
 		if (in_array($method, array('portrait', 'auto', 'fit', 'crop')))
@@ -172,7 +181,7 @@ class Event extends \Eloquent {
 			list($width) = $this->getImageDimensions($type, $size);
 			return $width;
 		}
-		return self::getImageConfig($type, $size, 'width');
+		return $this->getImageConfig($type, $size, 'width');
 	}
 
 	/**
@@ -188,7 +197,7 @@ class Event extends \Eloquent {
 		{
 			return null;
 		}
-		$method = self::getImageConfig($type, $size, 'method');
+		$method = $this->getImageConfig($type, $size, 'method');
 
 		// Height varies for images that are 'landscape', 'auto', 'fit', 'crop'
 		if (in_array($method, array('landscape', 'auto', 'fit', 'crop')))
@@ -196,7 +205,7 @@ class Event extends \Eloquent {
 			list($width, $height) = $this->getImageDimensions($type, $size);
 			return $height;
 		}
-		return self::getImageConfig($type, $size, 'height');
+		return $this->getImageConfig($type, $size, 'height');
 	}
 
 	/**
@@ -208,7 +217,7 @@ class Event extends \Eloquent {
 	 */
 	protected function getImageDimensions($type, $size)
 	{
-		$pathToImage = public_path(self::getImageConfig($type, $size, 'dir') . $this->$type);
+		$pathToImage = public_path($this->getImageConfig($type, $size, 'dir') . $this->$type);
 		if (is_file($pathToImage) && file_exists($pathToImage))
 		{
 			list($width, $height) = getimagesize($pathToImage);
@@ -229,9 +238,9 @@ class Event extends \Eloquent {
 	 * @internal param $type
 	 * @return mixed
 	 */
-	public static function getImageConfig($imageType, $size, $property)
+	public function getImageConfig($imageType, $size, $property)
 	{
-		$config = 'laravel-events::images.' . $imageType . '.';
+		$config = $this->getConfigPrefix().'images.' . $imageType . '.';
 		if ($size == 'original')
 		{
 			$config .= 'original.';
@@ -246,26 +255,26 @@ class Event extends \Eloquent {
 
 	public function getYouTubeThumbnailImage()
 	{
-		return str_replace('%YOU_TUBE_VIDEO_ID%', $this->you_tube_video_id, \Config::get('laravel-events::you_tube.thumbnail_code'));
+		return str_replace('%YOU_TUBE_VIDEO_ID%', $this->you_tube_video_id, \Config::get($this->getConfigPrefix().'you_tube.thumbnail_code'));
 	}
 
 	public function getYouTubeEmbedCode()
 	{
-		return str_replace('%YOU_TUBE_VIDEO_ID%', $this->you_tube_video_id, \Config::get('laravel-events::you_tube.embed_code'));
+		return str_replace('%YOU_TUBE_VIDEO_ID%', $this->you_tube_video_id, \Config::get($this->getConfigPrefix().'you_tube.embed_code'));
 	}
 
 	public function getMapZoom()
 	{
-		if (\Config::get('laravel-events::map.variable_map_zoom'))
+		if (\Config::get($this->getConfigPrefix().'map.variable_map_zoom'))
 		{
 			return $this->map_zoom;
 		}
-		return \Config::get('laravel-events::map.default_map_zoom');
+		return \Config::get($this->getConfigPrefix().'map.default_map_zoom');
 	}
 
 	public function getMapLatitude()
 	{
-		if (\Config::get('laravel-events::map.map_centre_different_to_marker'))
+		if (\Config::get($this->getConfigPrefix().'map.map_centre_different_to_marker'))
 		{
 			return $this->map_latitude;
 		}
@@ -274,7 +283,7 @@ class Event extends \Eloquent {
 
 	public function getMapLongitude()
 	{
-		if (\Config::get('laravel-events::map.map_centre_different_to_marker'))
+		if (\Config::get($this->getConfigPrefix().'map.map_centre_different_to_marker'))
 		{
 			return $this->map_longitude;
 		}
@@ -322,5 +331,26 @@ class Event extends \Eloquent {
 			->orderBy('starts', 'desc')
 			->orderBy('id', 'desc')
 			->first();
+	}
+
+	/**
+	 * Returns the config prefix
+	 *
+	 * @return string
+	 */
+	public function getConfigPrefix()
+	{
+		return $this->configPrefix;
+	}
+
+	/**
+	 * Sets the config prefix string
+	 *
+	 * @param $configBase string
+	 * @return string
+	 */
+	public function setConfigPrefix($configBase)
+	{
+		return $this->configPrefix = $configBase;
 	}
 }
