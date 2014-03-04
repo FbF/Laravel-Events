@@ -253,11 +253,31 @@ class Event extends \Eloquent {
 		return \Config::get($config);
 	}
 
+	/**
+	 * Helper function to determine whether the item has a YouTube video
+	 *
+	 * @return bool
+	 */
+	public function hasYouTubeVideo()
+	{
+		return !empty($this->you_tube_video_id);
+	}
+
+	/**
+	 * Returns the thumbnail image code defined in the config, for the current item's you tube video id
+	 *
+	 * @return string
+	 */
 	public function getYouTubeThumbnailImage()
 	{
 		return str_replace('%YOU_TUBE_VIDEO_ID%', $this->you_tube_video_id, \Config::get($this->getConfigPrefix().'you_tube.thumbnail_code'));
 	}
 
+	/**
+	 * Returns the embed code defined in the config, for the current item's you tube video id
+	 *
+	 * @return string
+	 */
 	public function getYouTubeEmbedCode()
 	{
 		return str_replace('%YOU_TUBE_VIDEO_ID%', $this->you_tube_video_id, \Config::get($this->getConfigPrefix().'you_tube.embed_code'));
@@ -303,6 +323,15 @@ class Event extends \Eloquent {
 	public function hasMap()
 	{
 		return $this->marker_latitude != 0 && $this->marker_longitude != 0;
+	}
+
+	/**
+	 * Help function to determine whether the item has a link
+	 * @return bool
+	 */
+	public function hasLink()
+	{
+		return !empty($this->link_text) && !empty($this->link_url);
 	}
 
 	/**
